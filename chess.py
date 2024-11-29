@@ -2,11 +2,11 @@
 
 class color:
     HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
+    BLUE = '\033[94m'
     WARNING = '\033[93m'
-    OKGREEN = '\033[92m'
+    GREEN = '\033[92m'
     FAIL = '\033[91m'
-    ENDC = '\033[0m'
+    ENDCOLOR = '\033[0m'
     BOLD = '\033[1m'
     GRAY = '\033[2m'
     UNDERLINE = '\033[4m'
@@ -15,10 +15,15 @@ class color:
 class Board:
     board = [["." for a in range(8)] for b in range(8)] # generic
 
+
     def __init__(self):
-        self.board[4][5] = 'X'
+        self.reset_board() # load starting position
+        return 
+
+
     
     def printboard(self):
+        # print the chess board
         print()
         print('  +-----------------+')
         c = 8
@@ -35,15 +40,30 @@ class Board:
         return
 
 
+
     def move_piece(self, starting_sq, final_sq):
-        # using chess notation
+        # using chess notation, move a piece
+        # physically swap a piece from starting square to final square
         
         start_row, start_col = self.convert_coord_to_index(starting_sq)
         end_row, end_col = self.convert_coord_to_index(final_sq)
 
         self.board[end_row][end_col], self.board[start_row][start_col] = self.board[start_row][start_col], "."
         return 
+
+
     
+    def change_square(self, final_square, piece_after):
+        # change square from what it is to piece_after
+        # square is a square in chess notation (like c3)
+        # (useful in pawn promotions or in crazyhouse or something)
+        
+        end_row, end_col = self.convert_coord_to_index(final_square)
+        self.board[end_row][end_col] = piece_after
+        return
+    
+
+
     def convert_coord_to_index(self, square):
         # convert a chess coordinate (e.g. f4) into a list index (e.g. [4][5])
         # input: square (string) from a1 -- h8
@@ -54,7 +74,39 @@ class Board:
         return (8 - sq_rank), int(ord(sq_file) - ord('a'))
 
 
+
+    def reset_board(self):
+        # reset board to starting position of normal chess
+
+        # add pieces
+        starting_ls = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
+        pointer = 'a'
+        for piece in starting_ls:
+            self.change_square(pointer+'1', f'{color.BLUE}' + piece + f'{color.ENDCOLOR}')
+            self.change_square(pointer+'8', f'{color.GREEN}' + piece + f'{color.ENDCOLOR}')
+            pointer = chr(ord(pointer) + 1) # increment pointer
+        
+        pointer = 'a'
+        # add pawns
+        for _ in range(8):
+            self.change_square(pointer+'2', f'{color.BLUE}P{color.ENDCOLOR}')
+            self.change_square(pointer+'7', f'{color.GREEN}P{color.ENDCOLOR}')
+            pointer = chr(ord(pointer) + 1) # increment pointer
+        
+        return #!!
+
+
+
+    def send_move(self, start_sq, end_sq):
+        # use this command to submit a move
+        self.move_piece(start_sq, end_sq)
+        self.printboard()
+        return
+    
+    
+    # sample text
+
 board = Board()
-board.printboard()
-board.move_piece('f4', 'h3')
-board.printboard()
+board.send_move('e2', 'e4')
+board.send_move('c7', 'c5')
+board.send_move('g1', 'f3')
