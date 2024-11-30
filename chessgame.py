@@ -4,17 +4,19 @@ class ChessGame:
     game_board = None
     white_king_check = False # is white king in check?
     black_king_check = False 
-    white_turn = None # is it white's move?
+    white_turn = True # is it white's move?
     move_number = 1
 
-    last_pawn_move = 'z0' # used for en passant, z0 is a null value
-    white_rook_movement = (False, False) # used for white castling
-    white_king_moved = False 
-    black_rook_movement = (False, False) # used for black castling
-    black_king_moved = False 
+    last_pawn_move = 'z0' # used for en passant, z0 is a null value -- this is where the en passant square IS (e.g. c7 --> c5 would make this c6)
+    white_kingside_castling = True # true if white can still castle kingside at any given moment
+    white_queenside_castling = True
+    black_kingside_castling = True
+    black_queenside_castling = True 
 
     white_piece_locations = []
     black_piece_locations = []
+
+    half_move_clock = 0 # yeah idk tinker with this later -- see https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
 
     def __init__(self):
         import board
@@ -25,12 +27,34 @@ class ChessGame:
         self.white_piece_locations = ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1'] + ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2']
         self.black_piece_locations = ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8'] + ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7']
     
+    # todo!
+    def is_white_king_in_check(self):
+        # todo
+        # check's if in current position, white king is in check
+        # returns true/false
+        return
+    # todo!
+    def is_black_king_in_check(self):
+        # basically the same as the method above
+        # these 2 methods should really only be used by the chess game class
+        return
+
     
+
+    def printboard(self): 
+        # should only be used for debugging
+        self.game_board.printboard()
+        return
+
+
+
+    # to finish legality and stuff
+    # also add castling in here
     def generate_white_candidate_moves(self):
 
         # candidate_moves is a list of all possible candidate moves
         # candidate_moves is a list of pairs, (a, b, c) where a is the starting square and b is the ending square of a piece
-        # c is the type of piece to promote to (N, B, R, Q) upon promotion if it is a pawn. otherwise it is simply '.' most of the time
+        # and c is the type of piece to promote to (N, B, R, Q) upon promotion if it is a pawn. otherwise it does not exist.
         candidate_moves = [] 
 
         # generate all possible moves for each piece + start pruning
@@ -478,14 +502,14 @@ class ChessGame:
         return candidate_moves       
         # check if anything is pinned + if king is in check
 
-
+    # todo
     def generate_black_candidate_moves(self):
         # ehrm tbd
         pass 
-    
+   
 
 
-
+    # to finish
     def send_move(self, start_sq, end_sq):
         self.game_board.send_move(start_sq, end_sq)
         # update last move, ply, white piece locations, etc.
@@ -498,9 +522,123 @@ class ChessGame:
         # fen is the string
         # idea: reset board, then add pieces and update everything else accordingly
 
-        self.game_board.reset_board() # back to dots
+
+        # reset everything
+        self.game_board.clear_board() # back to dots
+        self.white_piece_locations = []
+        self.black_piece_locations = []
+
+        self.white_kingside_castling = False
+        self.white_queenside_castling = False
+        self.black_kingside_castling = False
+        self.black_queenside_castling = False 
+        
+
+
+        fen_components = fen.split() # is list of length 6
+        # fen[0] -- the actual fen string
+        # fen[1] -- turn? (w/b)
+        # fen[2] -- castling priviledge? KQ -- white can kingside queenside, k -- black can kingside, can be '-' for none
+        # fen[3] -- en passant target square -- e.g. c6 if c7 --> c5 last move
+        # fen[4] -- halfmove clock
+        # fen[5] -- move number
+
+
+        # tackle fen string, fen[0]
+        # starts from rank 8 and works downward to rank 1
+        # uppercase --> black piece, lowercase --> white piece
+        rank_pointer = 0
+        file_pointer = 0 # pointers -- (0, 0) means a8, (2, 3) means d6 -- c3 = file/rank
+
+        for char in fen_components[0]:
+            if char == '/':
+                # move on yippee
+                rank_pointer += 1
+                file_pointer = 0
+                continue
+
+            if ord(char) > 48 and ord(char) < 57:
+                # char is a number between 1 and 8
+                file_pointer += int(char)
+                continue
+            
+            
+            if char.lower() == char:
+                # is a black piece
+                
+                # convert (rank_pointer, file_pointer) to actual square
+                actual_rank = str(8 - rank_pointer)
+                actual_col = chr(ord('a') + file_pointer)
+                self.black_piece_locations.append(actual_col + actual_rank) # file, rank
+
+                # put piece on board
+                self.game_board.set_piece_tosq(actual_col + actual_rank, char.upper(), 'b')
+                file_pointer += 1
+                continue
+            
+            # piece is a white piece
+            actual_rank = str(8 - rank_pointer)
+            actual_col = chr(ord('a') + file_pointer)
+            self.white_piece_locations.append(actual_col + actual_rank)
+
+            self.game_board.set_piece_tosq(actual_col + actual_rank, char, 'w')
+            file_pointer += 1
+            continue
+        
+
+        # tackle fen[1] --> fen[5]
+        # from above:
+        # fen[1] -- turn? (w/b)
+        # fen[2] -- castling priviledge? KQ -- white can kingside queenside, k -- black can kingside, can be '-' for none
+        # fen[3] -- en passant target square -- e.g. c6 if c7 --> c5 last move
+        # fen[4] -- halfmove clock
+        # fen[5] -- move number
+
+
+    
+        self.white_turn = (fen[1] == 'w') # fen[1]
+        
+
+        # castling priviledges
+        if fen[2].find('K') != -1:
+            self.white_kingside_castling = True
+            
+        if fen[2].find('Q') != -1:
+            self.white_queenside_castling = True
+
+        if fen[2].find('k') != -1:
+            self.black_kingside_castling = True
+
+        if fen[2].find('q') != -1:
+            self.black_queenside_castling = True
+
+
+        # target square en passant -- fen[3]
+        if fen[3] == '-':
+            self.last_pawn_move = 'z0'
+        else:
+            self.last_pawn_move = fen[3] # :D
+        
+        
+        # halfmove clock, fen[4]
+        self.half_move_clock = fen[4]
+
+        self.move_number = fen[5]
+        return #! we done
+
+
+
+
+        
+
+        
+
 
     
     # end class
 
 
+game = ChessGame()
+game.load_pos_from_fen('r2q1rk1/pb2bpp1/1pn1pn1p/2p5/2N5/1P1PPN2/PBQ1BPPP/3R1RK1 b - - 3 12')
+game.printboard()
+print(game.generate_white_candidate_moves())
