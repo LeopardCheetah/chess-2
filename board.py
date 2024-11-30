@@ -138,9 +138,3 @@ class Board:
 # board.send_move('c7', 'c5')
 # board.send_move('g1', 'f3')
 
-board = Board()
-board.reset_board()
-board.send_move('b2', 'b4')
-
-
-print(board.get_piece_color_atsq('b3'), board.get_piece_type_atsq('b3'))

@@ -9,4 +9,6 @@ Changelog -- where I'll keep progress updates.
 
 11/29 19:09 -- finished up knight possible moves
 
+<Note: I just coded something cool so maybe I should do a massive overhaul of the code i just wrote but nah>
+11/29 23:40 -- finished up king, rook, bishop, queen moves (in that order). IT WORKS! (also haven't accounted for checks and the like)
 
