@@ -11,10 +11,14 @@ Changelog -- where I'll keep progress updates.
     
 <Note: I just coded something cool so maybe I should do a massive overhaul of the code i just wrote but nah>    
 11/29 23:40 -- finished up king, rook, bishop, queen moves (in that order). IT WORKS! (also haven't accounted for checks and the like)    
-11/30 00:47 -- finished up load from FEN!!     
+11/30 00:47 -- finished up load from FEN!!        
+
+
+11/30 13:24 -- finished isWhiteKingInCheck command
+11/30 14:33 -- finished whiteCandidateMoves!! -- note that castling is still **impossible** and i really have no intention of doing it
+
 
 todolist (so i dont forget when i wake up):    
-- finish up generate white candidate moves -- notably figure out how to find the legality of these moves (code white king in check probably), then also figure out castling    
 - figure out send_move so that it actually records piece positions before and after etc. etc.    
 - make random mover bot!    
     

@@ -27,16 +27,215 @@ class ChessGame:
         self.white_piece_locations = ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1'] + ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2']
         self.black_piece_locations = ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8'] + ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7']
     
-    # todo!
-    def is_white_king_in_check(self):
+    
+    def is_white_king_in_check(self, white_piece_positions=None):
+        white_piece_location_list = []
+        if white_piece_positions is None:
+            white_piece_location_list = self.white_piece_locations
+        else:
+            white_piece_location_list = white_piece_positions
         # todo
         # check's if in current position, white king is in check
         # returns true/false
-        return
+
+        
+        # basically, from position, see if white king is in check
+        # check all legal moves of all black pieces!
+
+        white_king_location = ""
+        
+
+        for piece_location in white_piece_location_list:
+            if self.game_board.get_piece_type_atsq(piece_location) == 'K':
+                white_king_location = piece_location
+                break
+        
+        white_king_file = white_king_location[0]
+        white_king_rank = white_king_location[1]
+
+        # check for 8 knights, then each direction infinitely
+        # check for knights
+        for pair in [(-1, 2), (-1, -2), (1, 2), (1, -2), (2, -1), (2, 1), (-2, 1), (-2, -1)]:
+
+            try:
+                black_kn_file = chr(ord(white_king_file) + pair[0]) 
+                black_kn_rank = chr(ord(white_king_rank) + pair[1])
+                if self.game_board.get_piece_type_atsq(black_kn_file + black_kn_rank) == 'N' and self.game_board.get_piece_color_atsq(black_kn_file + black_kn_rank) == 'b':
+                    return True # yeah there's a knight
+            except:
+                pass # lmao don't worry about this -- if it errors then it's out of bounds and we're fine
+            
+
+        # check in the other 8 directions infinitely
+        # since this is where the king can move, kings can potentially touch here so we have to check that
+        
+        # check king's top right diagonal
+
+        num_rank = int(white_king_rank)
+        num_file = 8 - (ord('h') - ord(white_king_file))
+
+        king_top_right_count = min(8 - num_rank, 8 - num_file)
+
+        for ind in range(1, king_top_right_count + 1):
+            piece_color_at_sq = self.game_board.get_piece_color_atsq(chr(ord(white_king_file) + ind) + str(num_rank + ind))
+
+            if piece_color_at_sq == 'w':
+                break # king is safe -- for now.
+            
+            if piece_color_at_sq == 'b':
+                piece_type_at_sq = self.game_board.get_piece_type_atsq(chr(ord(white_king_file) + ind) + str(num_rank + ind))
+                if piece_type_at_sq == 'B' or piece_type_at_sq == 'Q':
+                    return True # we out
+                
+                if (piece_type_at_sq == 'K' or piece_type_at_sq == 'P') and ind == 1:
+                    return True
+                
+                break # we are far enough away from other pieces so everything is fine
+            continue
+                
+
+        # check top left
+        king_top_left_count = min(8 - num_rank, num_file - 1)
+
+        for ind in range(1, king_top_left_count + 1):
+            king_str = chr(ord(white_king_file) - ind) + str(num_rank + ind)
+            piece_color_at_sq = self.game_board.get_piece_color_atsq(king_str)
+
+            if piece_color_at_sq == 'w':
+                break 
+            
+            if piece_color_at_sq == 'b':
+                piece_type_at_sq = self.game_board.get_piece_type_atsq(king_str)
+                if piece_type_at_sq == 'B' or piece_type_at_sq == 'Q':
+                    return True # we out
+                
+                if (piece_type_at_sq == 'K' or piece_type_at_sq == 'P') and ind == 1:
+                    return True # pawns are menacing beings
+                
+                break
+
+            continue
+
+
+        # check bottom left
+        king_bottom_left_count = min(num_rank - 1, num_file - 1)
+
+        for ind in range(1, king_bottom_left_count + 1):
+            king_str = chr(ord(white_king_file) - ind) + str(num_rank - ind)
+            piece_color_at_sq = self.game_board.get_piece_color_atsq(king_str)
+
+            if piece_color_at_sq == 'w':
+                break 
+            
+            if piece_color_at_sq == 'b':
+                piece_type_at_sq = self.game_board.get_piece_type_atsq(king_str)
+                if piece_type_at_sq == 'B' or piece_type_at_sq == 'Q':
+                    return True 
+                
+                if piece_type_at_sq == 'K' and ind == 1:
+                    return True 
+                
+                break
+            continue
+
+
+        # check bottom right
+        queen_bottom_right_count = min(num_rank - 1, 8 - num_file)
+
+        for ind in range(1, queen_bottom_right_count + 1):
+            queen_str = chr(ord(white_king_file) + ind) + str(num_rank - ind)
+            piece_color_at_sq = self.game_board.get_piece_color_atsq(king_str)
+
+            if piece_color_at_sq == 'w':
+                break 
+            
+            if piece_color_at_sq == 'b':
+                piece_type_at_sq = self.game_board.get_piece_type_atsq(king_str)
+                if piece_type_at_sq == 'B' or piece_type_at_sq == 'Q':
+                    return True 
+                
+                if piece_type_at_sq == 'K' and ind == 1:
+                    return True 
+                
+                break
+            
+            continue 
+
+
+        
+        # from rook code
+        # if-statement to check the 4 bounds of the king -- upper, lower, left, right
+
+        # check limits of the top squares
+        for sq_rank in range(num_rank + 1, 8 + 1):
+            if self.game_board.get_piece_color_atsq(white_king_file + str(sq_rank)) == 'w':
+                break # end immediately; break only breaks out of one loop so we're fine 
+            
+            if self.game_board.get_piece_color_atsq(white_king_file + str(sq_rank)) == 'b':
+                if self.game_board.get_piece_type_atsq(white_king_file + str(sq_rank)) in ['R', 'Q']:
+                    return True
+                
+                if self.game_board.get_piece_type_atsq(white_king_file + str(sq_rank)) == 'K' and (sq_rank - num_rank) == 1:
+                    return True
+                
+                break
+            continue 
+        
+
+        # check bottom
+        for sq_rank in range(num_rank - 1, 0, -1): # backwards loop
+            if self.game_board.get_piece_color_atsq(white_king_file + str(sq_rank)) == 'w':
+                break # end immediately; break only breaks out of one loop so we're fine 
+            
+            if self.game_board.get_piece_color_atsq(white_king_file + str(sq_rank)) == 'b':
+                if self.game_board.get_piece_type_atsq(white_king_file + str(sq_rank)) in ['R', 'Q']:
+                    return True
+                
+                if self.game_board.get_piece_type_atsq(white_king_file + str(sq_rank)) == 'K' and (num_rank - sq_rank) == 1:
+                    return True
+                
+                break
+            continue 
+        
+
+        # check right
+        # rank stays constant
+        for sq_file_ord in range(ord(white_king_file) + 1, ord('h') + 1):
+            # use chr(x) whenever
+            if self.game_board.get_piece_color_atsq(chr(sq_file_ord) + white_king_rank) == 'w':
+                break
+            
+            if self.game_board.get_piece_color_atsq(chr(sq_file_ord) + white_king_rank) == 'b':
+                enemy_piece_type = self.game_board.get_piece_type_atsq(chr(sq_file_ord) + white_king_rank)
+                if enemy_piece_type == 'R' or enemy_piece_type == 'Q' or (enemy_piece_type == 'K' and sq_file_ord - ord(white_king_file) == 1):
+                    return True
+                
+                break
+            continue
+        
+        for sq_file_ord in range(ord(white_king_file) - 1, ord('a') - 1, -1):
+            # use chr(x) whenever
+        
+            if self.game_board.get_piece_color_atsq(chr(sq_file_ord) + white_king_rank) == 'w':
+                break
+            
+            if self.game_board.get_piece_color_atsq(chr(sq_file_ord) + white_king_rank) == 'b':
+                enemy_piece_type = self.game_board.get_piece_type_atsq(chr(sq_file_ord) + white_king_rank)
+                if enemy_piece_type == 'R' or enemy_piece_type == 'Q' or (enemy_piece_type == 'K' and ord(white_king_file) - sq_file_ord == 1):
+                    return True
+                
+                break
+            continue
+
+        # end of checking if king is in check
+        return False
+
     # todo!
     def is_black_king_in_check(self):
         # basically the same as the method above
         # these 2 methods should really only be used by the chess game class
+
+        # from current position, check if black king is in check
         return
 
     
@@ -499,8 +698,48 @@ class ChessGame:
             # ehrm code should never reach here
             raise ValueError("Piece at location", square, "does not exist.")
 
-        return candidate_moves       
+
+        # check legality of all moves
         # check if anything is pinned + if king is in check
+
+        # idea: move piece to location, then check if white king is in check at that point in time
+        actual_candidate_moves = []
+
+        for pair in candidate_moves:
+            # move piece to location then reset it
+            final_square_piece_type = self.game_board.get_piece_type_atsq(pair[1])
+            
+            final_square_piece_color = self.game_board.get_piece_color_atsq(pair[1])
+
+            # move piece to square and check if king is in check
+            self.game_board.move_piece(pair[0], pair[1])
+
+
+            # modify the list of pieces if anything's moved etc etc so everything makes more sense
+            piece_list = self.white_piece_locations.copy() # do a deep copy
+            piece_list.pop(self.white_piece_locations.index(pair[0]))
+            piece_list.append(pair[1])
+            
+
+
+            if self.is_white_king_in_check(piece_list):
+                # don't add the pair
+                pass 
+            else:
+                actual_candidate_moves.append(pair)
+            
+            # reset position
+            if final_square_piece_type != -1:
+                # piece exists
+                self.game_board.move_piece(pair[1], pair[0])
+                self.game_board.set_piece_tosq(pair[1], final_square_piece_type, final_square_piece_color)
+                continue
+            else:
+                self.game_board.move_piece(pair[1], pair[0])
+            continue # end for loop
+
+        return actual_candidate_moves       
+        
 
     # todo
     def generate_black_candidate_moves(self):
@@ -639,6 +878,7 @@ class ChessGame:
 
 
 game = ChessGame()
-game.load_pos_from_fen('r2q1rk1/pb2bpp1/1pn1pn1p/2p5/2N5/1P1PPN2/PBQ1BPPP/3R1RK1 b - - 3 12')
+game.load_pos_from_fen('rn2kb1r/p2p1ppp/q3p3/1Rpn4/2K1P3/1PP5/1P1P1PPP/1NBQ1BNR w kq - 5 12')
 game.printboard()
 print(game.generate_white_candidate_moves())
+print(game.is_white_king_in_check())
