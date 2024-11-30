@@ -478,6 +478,14 @@ class ChessGame:
         return candidate_moves       
         # check if anything is pinned + if king is in check
 
+
+    def generate_black_candidate_moves(self):
+        # ehrm tbd
+        pass 
+    
+
+
+
     def send_move(self, start_sq, end_sq):
         self.game_board.send_move(start_sq, end_sq)
         # update last move, ply, white piece locations, etc.
@@ -485,9 +493,13 @@ class ChessGame:
         return
 
 
-    def generate_black_candidate_moves(self):
-        # ehrm tbd
-        pass 
+
+    def load_pos_from_fen(self, fen):
+        # fen is the string
+        # idea: reset board, then add pieces and update everything else accordingly
+
+        self.game_board.reset_board() # back to dots
+
     
     # end class
 

@@ -108,7 +108,11 @@ class Board:
 
 
 
+    def clear_board(self):
+        self.board = [["." for a in range(8)] for b in range(8)] # back to dots and nothingness
+        return 
 
+        
     def get_piece_color_atsq(self, square):
         # note if the piece at square x is black or white or none.
         row, col = self.convert_coord_to_index(square)
