@@ -17,7 +17,6 @@ class Board:
 
 
     def __init__(self):
-        self.reset_board() # load starting position
         return 
 
 
@@ -104,6 +103,32 @@ class Board:
         return
     
     
+    def get_board(self):
+        return self.board
+
+
+
+
+    def get_piece_color_atsq(self, square):
+        # note if the piece at square x is black or white or none.
+        row, col = self.convert_coord_to_index(square)
+        if self.board[row][col] == ".":
+            return -1
+    
+
+        return 'w' if self.board[row][col][3] == '4' else 'b' # some interesting string stuff going on here
+    
+
+
+    def get_piece_type_atsq(self, square):
+        row, col = self.convert_coord_to_index(square)
+        if self.board[row][col] == ".":
+            return -1
+        
+        return self.board[row][col][5]
+
+
+
     # sample text
 
 
@@ -112,3 +137,10 @@ class Board:
 # board.send_move('e2', 'e4')
 # board.send_move('c7', 'c5')
 # board.send_move('g1', 'f3')
+
+board = Board()
+board.reset_board()
+board.send_move('b2', 'b4')
+
+
+print(board.get_piece_color_atsq('b3'), board.get_piece_type_atsq('b3'))
