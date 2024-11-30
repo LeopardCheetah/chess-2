@@ -20,7 +20,19 @@ class Board:
         return 
 
 
+    def convert_coord_to_index(self, square):
+        # convert a chess coordinate (e.g. f4) into a list index (e.g. [4][5])
+        # input: square (string) from a1 -- h8
+
+        sq_rank = int(square[1])
+        sq_file = square[0]
+
+        return (8 - sq_rank), int(ord(sq_file) - ord('a'))
+
     
+
+
+
     def printboard(self):
         # print the chess board
         print()
@@ -37,41 +49,6 @@ class Board:
         print('  +-----------------+')
         print('    a b c d e f g h')
         return
-
-
-
-    def move_piece(self, starting_sq, final_sq):
-        # using chess notation, move a piece
-        # physically swap a piece from starting square to final square
-        
-        start_row, start_col = self.convert_coord_to_index(starting_sq)
-        end_row, end_col = self.convert_coord_to_index(final_sq)
-
-        self.board[end_row][end_col], self.board[start_row][start_col] = self.board[start_row][start_col], "."
-        return 
-
-
-    
-    def change_square(self, final_square, piece_after):
-        # change square from what it is to piece_after
-        # square is a square in chess notation (like c3)
-        # (useful in pawn promotions or in crazyhouse or something)
-        
-        end_row, end_col = self.convert_coord_to_index(final_square)
-        self.board[end_row][end_col] = piece_after
-        return
-    
-
-
-    def convert_coord_to_index(self, square):
-        # convert a chess coordinate (e.g. f4) into a list index (e.g. [4][5])
-        # input: square (string) from a1 -- h8
-
-        sq_rank = int(square[1])
-        sq_file = square[0]
-
-        return (8 - sq_rank), int(ord(sq_file) - ord('a'))
-
 
 
     def reset_board(self):
@@ -95,6 +72,50 @@ class Board:
         return #!!
 
 
+    def clear_board(self):
+        self.board = [["." for a in range(8)] for b in range(8)] # back to dots and nothingness
+        return 
+
+
+
+
+    def move_piece(self, starting_sq, final_sq):
+        # using chess notation, move a piece
+        # physically swap a piece from starting square to final square
+        
+        start_row, start_col = self.convert_coord_to_index(starting_sq)
+        end_row, end_col = self.convert_coord_to_index(final_sq)
+
+        self.board[end_row][end_col], self.board[start_row][start_col] = self.board[start_row][start_col], "."
+        return 
+
+    
+    def change_square(self, final_square, piece_after):
+        # change square from what it is to piece_after
+        # square is a square in chess notation (like c3)
+        # (useful in pawn promotions or in crazyhouse or something)
+        
+        end_row, end_col = self.convert_coord_to_index(final_square)
+        self.board[end_row][end_col] = piece_after
+        return
+    
+
+    def set_piece_tosq(self, square, piece_type, piece_color):
+        # square --> a1 or whatever
+        # piece type -- N/B/R/Q/K/P?
+        # piece color -- w/b
+
+        # we assume all inputs are "good"
+
+        color_code = color.BLUE if piece_color == 'w' else color.GREEN # blue -- white, green -- black
+
+        self.change_square(square, f'{color_code}' + piece_type + f'{color.ENDCOLOR}')
+        return 
+
+
+
+
+
 
     def send_move(self, start_sq, end_sq):
         # use this command to submit a move
@@ -107,12 +128,6 @@ class Board:
         return self.board
 
 
-
-    def clear_board(self):
-        self.board = [["." for a in range(8)] for b in range(8)] # back to dots and nothingness
-        return 
-
-        
     def get_piece_color_atsq(self, square):
         # note if the piece at square x is black or white or none.
         row, col = self.convert_coord_to_index(square)
@@ -122,7 +137,6 @@ class Board:
 
         return 'w' if self.board[row][col][3] == '4' else 'b' # some interesting string stuff going on here
     
-
 
     def get_piece_type_atsq(self, square):
         row, col = self.convert_coord_to_index(square)
