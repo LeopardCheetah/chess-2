@@ -5,4 +5,8 @@ Changelog -- where I'll keep progress updates.
 
 11/29 15:41 -- finished board.py (I think). Am starting on getting an actual chess game.
 11/29 17:14 -- in the middle of generating all candidate moves
+11/29 17:28 -- finished generating all possible pawn moves (+ en passant, promotion)
+
+11/29 19:09 -- finished up knight possible moves
+
 

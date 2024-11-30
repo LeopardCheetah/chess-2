@@ -45,6 +45,9 @@ class ChessGame:
             file = square[0]
             rank = square[1]
 
+
+
+
             if piece_type == 'P':
                 # pawn is at (file, rank)
                 
@@ -74,8 +77,6 @@ class ChessGame:
 
                     continue
 
-
-
                 # check if pawn can move up
                 if self.game_board.get_piece_color_atsq(file + str(int(rank) + 1)) == -1:
                     # pawn is free to move up (technically -- if not pinned)
@@ -90,28 +91,67 @@ class ChessGame:
                 # top left
                 if file != 'a' and self.game_board.get_piece_color_atsq(chr(ord(file) - 1) + str(int(rank) + 1)) == 'b':
                     # eat 
-                    candidate_moves.append((file + rank, file + 'x' + chr(ord(file) - 1) + str(int(rank) + 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) + 1), '.'))
                 
                 # top right
                 if file != 'h' and self.game_board.get_piece_color_atsq(chr(ord(file) + 1) + str(int(rank) + 1)) == 'b':
-                    candidate_moves.append((file + rank, file + 'x' + chr(ord(file) + 1) + str(int(rank) + 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) + 1), '.'))
                 
 
                 # check for en passant
                 # en passant to the left
                 if rank == '5' and last_pawn_move[0] == chr(ord(file) - 1):
-                    candidate_moves.append((file + rank, file + 'x' + chr(ord(file) - 1) + str(int(rank) + 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) + 1), '.'))
                 
                 # en passant to the right
                 if rank == '5' and last_pawn_move[0] == chr(ord(file) + 1):
-                    candidate_moves.append((file + rank, file + 'x' + chr(ord(file) + 1) + str(int(rank) + 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) + 1), '.'))
                 
                 # :)
                 continue
 
+
+
+
+
+
             if piece_type == 'N':
-                continue
+                # idea: square = numbers, then generate based on numbers
+                # a --> 1, h --> 8
+                # 1 --> 8
+                new_file = 8 - (ord('h') - ord(file))
+                new_rank = int(rank)
+
+                # treat new_file, new_rank as a pair
+                possible_knight_squares = [(new_file - 2, new_rank - 1), (new_file + 2, new_rank - 1)] + [(new_file - 2, new_rank + 1), (new_file + 2, new_rank + 1)]
+                possible_knight_squares += [(new_file - 1, new_rank + 2), (new_file + 1, new_rank + 2)] + [(new_file - 1, new_rank - 2), (new_file + 1, new_rank - 2)]
         
+                # now parse pairs
+                candidate_knight_moves = []
+                for pair in possible_knight_squares:
+                    if pair[0] < 1 or pair[0] > 8 or pair[1] < 1 or pair[1] > 8:
+                        continue
+                    
+                    candidate_knight_moves.append(pair)
+                
+
+                # now check if there's a piece at that location
+                for pair in candidate_knight_moves:
+                    # convert back to normal coordinates
+                    new_file = chr(ord('a') - 1 + pair[0]) # 1 --> a, 2 --> b, etc.
+                    new_rank = pair[1]
+
+                    if self.game_board.get_piece_color_atsq(new_file + new_rank) == 'w':
+                        continue
+                    
+                    candidate_moves.append((file + rank, new_file + new_rank)) # doesn't matter if it's a capture or not
+                
+                continue
+                    
+
+
+
+
             if piece_type == 'B':
                 continue
 
