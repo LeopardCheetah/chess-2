@@ -247,7 +247,6 @@ class ChessGame:
 
 
 
-    # to finish legality and stuff
     # also add castling in here
     def generate_white_candidate_moves(self):
 
@@ -698,9 +697,11 @@ class ChessGame:
             # ehrm code should never reach here
             raise ValueError("Piece at location", square, "does not exist.")
 
-
+        
         # check legality of all moves
         # check if anything is pinned + if king is in check
+
+        # NOTE -- this works even if the king is already in check -- as it will automatically reject anything that leaves the king in check
 
         # idea: move piece to location, then check if white king is in check at that point in time
         actual_candidate_moves = []
@@ -739,6 +740,7 @@ class ChessGame:
             continue # end for loop
 
         return actual_candidate_moves       
+        # end white_candidate_moves
         
 
     # todo
@@ -748,11 +750,55 @@ class ChessGame:
    
 
 
-    # to finish
-    def send_move(self, start_sq, end_sq):
+    def send_white_move(self, start_sq, end_sq, pawn_promotion=None):
+        # check legality of move
+        # pawn_promotion is a string like 'Q' or 'N' -- piece to promote to
+        
+        if pawn_promotion is None and (start_sq, end_sq) not in self.generate_white_candidate_moves():
+            # ehrm move is bad
+            return -1
+        
+        if pawn_prmotion is not None and (start_sq, end_sq, pawn_promotion) not in self.generate_white_candidate_moves():
+            # move is still bad
+            return -1
+        
+        # ok move seems legit
         self.game_board.send_move(start_sq, end_sq)
-        # update last move, ply, white piece locations, etc.
-        # also check legality
+        if end_sq in self.black_piece_locations:
+            self.black_piece_locations.remove(end_sq) # piece is captured
+        
+        self.white_piece_locations.remove(start_sq)
+        self.white_piece_locations.append(end_sq)
+        
+        self.white_turn = False
+        
+        # ok eval board
+        if self.is_black_king_in_check():
+            self.black_king_check = True
+
+
+        # update last_pawn_move (if pawn moved from e.g. c2 to c4)
+        if self.game_board.get_piece_type_atsq(end_sq) == 'P' and start_sq[1] == '2' and start_sq[0] == end_sq[0]:
+            # chat im pretty sure the pawn just moved two squares
+            self.last_pawn_move = start_sq[0] + chr(ord(start_sq[1]) + 1) # yippee
+        else:
+            self.last_pawn_move = 'z0' # null value
+
+        
+        # update castling -- TODO
+        if self.game_board.get_piece_type_atsq(end_sq) == 'K':
+            # no castling
+            self.white_kingside_castling = False
+            self.white_queenside_castling = False 
+        
+        # ehrm add section about if a rook moves + the castling priviledges there + if captured + all that stuff
+
+
+        
+        return
+    
+    # todo
+    def send_black_move(self, start_sq, end_sq):
         return
 
 

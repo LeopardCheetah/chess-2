@@ -17,9 +17,19 @@ Changelog -- where I'll keep progress updates.
 11/30 13:24 -- finished isWhiteKingInCheck command
 11/30 14:33 -- finished whiteCandidateMoves!! -- note that castling is still **impossible** and i really have no intention of doing it
 
+12/02 00:16 -- finished send_white_move (now just needa do send_black_move); seems like all there is to do is to code everything for black and then win!!
+
 
 todolist (so i dont forget when i wake up):    
-- figure out send_move so that it actually records piece positions before and after etc. etc.    
-- make random mover bot!    
+- finish everything for black
+- make random mover bot!  
+- make a wrapper class (again) to actually play chess
+
+- deploy to lichess?
+
+other also kinda important:
+- incorporate castling
+- figure out the half move clock ( + 50 move rule, 3-fold repetition)
     
+
     
