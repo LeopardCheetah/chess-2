@@ -803,6 +803,8 @@ class ChessGame:
 
 
 
+
+
     def load_pos_from_fen(self, fen):
         # fen is the string
         # idea: reset board, then add pieces and update everything else accordingly
@@ -910,8 +912,6 @@ class ChessGame:
 
         self.move_number = fen[5]
         return #! we done
-
-
 
 
         
