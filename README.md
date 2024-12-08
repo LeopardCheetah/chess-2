@@ -8,4 +8,7 @@ See [LeopardBot](https://github.com/LeopardCheetah/LeopardBot) repo for the whol
 
 
 Update: I failed my target goal :c.  
-I'll hopefully finish it up today (12/8)
+I'll hopefully finish it up today (12/8)   
+
+
+update 2: I HAVE FINISHED (kinda)
