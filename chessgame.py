@@ -269,7 +269,15 @@ class ChessGame:
             try:
                 white_kn_file = chr(ord(black_king_file) + pair[0]) 
                 white_kn_rank = chr(ord(black_king_rank) + pair[1])
+
+
+                if ord(white_kn_file) > ord('h') or ord(white_kn_file) < ord('a') or ord(white_kn_rank) > ord('8') or ord(white_kn_rank) < ord('1'):
+                    continue
+
+
+
                 if (white_kn_file + white_kn_rank not in black_piece_location_list) and (self.game_board.get_piece_type_atsq(white_kn_file + white_kn_rank) == 'N' and self.game_board.get_piece_color_atsq(white_kn_file + white_kn_rank) == 'w'):
+                    
                     return True # yeah there's a knight
             except:
                 pass # lmao don't worry about this -- if it errors then it's out of bounds and we're fine
@@ -353,7 +361,7 @@ class ChessGame:
         king_bottom_right_count = min(num_rank - 1, 8 - num_file)
 
         for ind in range(1, king_bottom_right_count + 1):
-            king_str = chr(ord(black_king_file) - ind) + str(num_rank - ind)
+            king_str = chr(ord(black_king_file) + ind) + str(num_rank - ind)
             piece_color_at_sq = self.game_board.get_piece_color_atsq(king_str)
 
             if piece_color_at_sq == 'b':
@@ -362,11 +370,9 @@ class ChessGame:
             if piece_color_at_sq == 'w':
                 piece_type_at_sq = self.game_board.get_piece_type_atsq(king_str)
                 if piece_type_at_sq == 'B' or piece_type_at_sq == 'Q':
-                    print('b')
                     return True 
                 
                 if (piece_type_at_sq == 'K' or piece_type_at_sq == 'P') and ind == 1:
-                    print('c', piece_type_at_sq, ind)
                     return True 
                 
                 break
@@ -509,33 +515,33 @@ class ChessGame:
                 # check if pawn can move up
                 if self.game_board.get_piece_color_atsq(file + str(int(rank) + 1)) == -1:
                     # pawn is free to move up (technically -- if not pinned)
-                    candidate_moves.append((file + rank, file + str(int(rank) + 1), '.'))
+                    candidate_moves.append((file + rank, file + str(int(rank) + 1)))
 
                     if rank == '2' and self.game_board.get_piece_color_atsq(file + '4') == -1:
                         # we can move 2 squares yippee
-                        candidate_moves.append((file + '2', file + '4', '.')) # move from x2 --> x4 (e.g. e2 --> e4)
+                        candidate_moves.append((file + '2', file + '4')) # move from x2 --> x4 (e.g. e2 --> e4)
 
                 
                 # check top left + top right of pawn for captures
                 # top left
                 if file != 'a' and self.game_board.get_piece_color_atsq(chr(ord(file) - 1) + str(int(rank) + 1)) == 'b':
                     # eat 
-                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) + 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) + 1)))
                 
                 # top right
                 if file != 'h' and self.game_board.get_piece_color_atsq(chr(ord(file) + 1) + str(int(rank) + 1)) == 'b':
-                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) + 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) + 1)))
                 
 
                 # check for en passant
                 # en passant to the left
                 if rank == '5' and self.last_pawn_move[0] == chr(ord(file) - 1):
-                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) + 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) + 1)))
                 
                 # en passant to the right
 
                 if rank == '5' and self.last_pawn_move[0] == chr(ord(file) + 1):
-                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) + 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) + 1)))
                 
                 # :)
                 continue
@@ -992,31 +998,31 @@ class ChessGame:
 
                 # check if pawn can move DOWN
                 if self.game_board.get_piece_color_atsq(file + str(int(rank) - 1)) == -1:
-                    candidate_moves.append((file + rank, file + str(int(rank) - 1), '.'))
+                    candidate_moves.append((file + rank, file + str(int(rank) - 1)))
 
                     if rank == '7' and self.game_board.get_piece_color_atsq(file + '5') == -1:
                         # we can move 2 squares yippee
-                        candidate_moves.append((file + '7', file + '5', '.')) 
+                        candidate_moves.append((file + '7', file + '5')) 
 
                 
                 # check bottom left + bottom right of pawn for captures
                 if file != 'a' and self.game_board.get_piece_color_atsq(chr(ord(file) - 1) + str(int(rank) - 1)) == 'w':
-                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) - 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) - 1)))
                 
                 if file != 'h' and self.game_board.get_piece_color_atsq(chr(ord(file) + 1) + str(int(rank) - 1)) == 'w':
-                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) - 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) - 1)))
                 
 
                 # check for en passant # e.g. d5 --> d4, e2 --> e4, d4 --> e3 e.p.
                 # en passant to the left
 
                 if rank == '4' and self.last_pawn_move[0] == chr(ord(file) - 1):
-                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) - 1), '.'))
+                    candidate_moves.append((file + rank, chr(ord(file) - 1) + str(int(rank) - 1)))
                 
                 # en passant to the right
 
                 if rank == '4' and self.last_pawn_move[0] == chr(ord(file) + 1):
-                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) - 1), '.')) 
+                    candidate_moves.append((file + rank, chr(ord(file) + 1) + str(int(rank) - 1))) 
                 
                 # :)
                 continue
@@ -1456,6 +1462,18 @@ class ChessGame:
             self.black_king_check = True
 
 
+        # check if last move was en passant
+        # e.g. last move was g5 --> f6 and square is f6
+        if self.game_board.get_piece_type_atsq(end_sq) == 'P' and self.last_pawn_move == end_sq:
+            # en_passant lmao
+            print("en_passant lmao")
+            
+            self.black_piece_locations.remove(end_sq[0] + chr(ord(end_sq[1]) - 1))
+            # update board
+            self.game_board.change_square(end_sq[0] + chr(ord(end_sq[1]) - 1), ".")
+
+
+
         # update last_pawn_move (if pawn moved from e.g. c2 to c4)
         if self.game_board.get_piece_type_atsq(end_sq) == 'P' and start_sq[1] == '2' and start_sq[0] == end_sq[0]:
             # chat im pretty sure the pawn just moved two squares
@@ -1477,7 +1495,7 @@ class ChessGame:
 
 
 
-    def send_black_move(self, start_sq, end_sq):
+    def send_black_move(self, start_sq, end_sq, pawn_promotion=None):
 
         
         if pawn_promotion is None and (start_sq, end_sq) not in self.generate_black_candidate_moves():
@@ -1494,7 +1512,7 @@ class ChessGame:
         self.black_piece_locations.remove(start_sq)
         self.black_piece_locations.append(end_sq)
         
-        self.black_turn = False
+        self.white_turn = True
         
         # ok eval board
         if self.is_white_king_in_check():
@@ -1638,12 +1656,10 @@ class ChessGame:
     
     # end class!
 
-
+'''
 game = ChessGame()
-game.load_pos_from_fen('rnbq1b1r/ppp1pk1p/8/3p2p1/3PP1n1/5P2/PPP2K1P/RNBQ1B1R w - - 0 8')
+game.load_pos_from_fen('r1bk1Qnr/ppp1p1pp/3q4/3pN3/4P3/8/PPPP1PPP/RNB1KB1R b KQ - 0 6')
 game.printboard()
-print(game.generate_white_candidate_moves())
-print(game.is_white_king_in_check())
-print()
 print(game.generate_black_candidate_moves())
 print(game.is_black_king_in_check())
+'''

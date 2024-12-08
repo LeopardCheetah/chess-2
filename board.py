@@ -120,7 +120,6 @@ class Board:
     def send_move(self, start_sq, end_sq):
         # use this command to submit a move
         self.move_piece(start_sq, end_sq)
-        self.printboard()
         return
     
     
