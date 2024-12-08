@@ -22,6 +22,7 @@ Changelog -- where I'll keep progress updates.
 ----
 
 12/08 12:23 -- updated is_black_king_in_check and black_candidate_moves
+12/08 12:52 -- debugged black_king_in_check (it was a variable error bruh) and did send_black_move. i think random bot is ready to be coded :D 
 
 
 todolist (so i dont forget when i wake up):    

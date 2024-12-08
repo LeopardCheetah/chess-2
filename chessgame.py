@@ -8,7 +8,9 @@ class ChessGame:
     move_number = 1
 
     last_pawn_move = 'z0' # used for en passant, z0 is a null value -- this is where the en passant square IS (e.g. c7 --> c5 would make this c6)
+    
     white_kingside_castling = True # true if white can still castle kingside at any given moment
+    # ok we lowkey not using these 4 since I gave up on castling
     white_queenside_castling = True
     black_kingside_castling = True
     black_queenside_castling = True 
@@ -265,9 +267,9 @@ class ChessGame:
         for pair in [(-1, 2), (-1, -2), (1, 2), (1, -2), (2, -1), (2, 1), (-2, 1), (-2, -1)]:
 
             try:
-                black_kn_file = chr(ord(black_king_file) + pair[0]) 
-                black_kn_rank = chr(ord(black_king_rank) + pair[1])
-                if self.game_board.get_piece_type_atsq(black_kn_file + black_kn_rank) == 'N' and self.game_board.get_piece_color_atsq(black_kn_file + black_kn_rank) == 'b':
+                white_kn_file = chr(ord(black_king_file) + pair[0]) 
+                white_kn_rank = chr(ord(black_king_rank) + pair[1])
+                if (white_kn_file + white_kn_rank not in black_piece_location_list) and (self.game_board.get_piece_type_atsq(white_kn_file + white_kn_rank) == 'N' and self.game_board.get_piece_color_atsq(white_kn_file + white_kn_rank) == 'w'):
                     return True # yeah there's a knight
             except:
                 pass # lmao don't worry about this -- if it errors then it's out of bounds and we're fine
@@ -292,6 +294,7 @@ class ChessGame:
             if piece_color_at_sq == 'w':
                 piece_type_at_sq = self.game_board.get_piece_type_atsq(chr(ord(black_king_file) + ind) + str(num_rank + ind))
                 if piece_type_at_sq == 'B' or piece_type_at_sq == 'Q':
+
                     return True # we out
                 
                 if (piece_type_at_sq == 'K') and ind == 1:
@@ -317,7 +320,7 @@ class ChessGame:
                     return True # we out
                 
                 if (piece_type_at_sq == 'K') and ind == 1:
-                    return True # pawns are menacing beings
+                    return True
                 
                 break
 
@@ -347,10 +350,10 @@ class ChessGame:
 
 
         # check bottom right
-        queen_bottom_right_count = min(num_rank - 1, 8 - num_file)
+        king_bottom_right_count = min(num_rank - 1, 8 - num_file)
 
-        for ind in range(1, queen_bottom_right_count + 1):
-            queen_str = chr(ord(black_king_file) + ind) + str(num_rank - ind)
+        for ind in range(1, king_bottom_right_count + 1):
+            king_str = chr(ord(black_king_file) - ind) + str(num_rank - ind)
             piece_color_at_sq = self.game_board.get_piece_color_atsq(king_str)
 
             if piece_color_at_sq == 'b':
@@ -359,9 +362,11 @@ class ChessGame:
             if piece_color_at_sq == 'w':
                 piece_type_at_sq = self.game_board.get_piece_type_atsq(king_str)
                 if piece_type_at_sq == 'B' or piece_type_at_sq == 'Q':
+                    print('b')
                     return True 
                 
                 if (piece_type_at_sq == 'K' or piece_type_at_sq == 'P') and ind == 1:
+                    print('c', piece_type_at_sq, ind)
                     return True 
                 
                 break
@@ -944,7 +949,9 @@ class ChessGame:
         # end white_candidate_moves
         
 
-    # done!
+
+
+
     def generate_black_candidate_moves(self):
         candidate_moves = [] 
 
@@ -987,9 +994,9 @@ class ChessGame:
                 if self.game_board.get_piece_color_atsq(file + str(int(rank) - 1)) == -1:
                     candidate_moves.append((file + rank, file + str(int(rank) - 1), '.'))
 
-                    if rank == '8' and self.game_board.get_piece_color_atsq(file + '6') == -1:
+                    if rank == '7' and self.game_board.get_piece_color_atsq(file + '5') == -1:
                         # we can move 2 squares yippee
-                        candidate_moves.append((file + '8', file + '6', '.')) 
+                        candidate_moves.append((file + '7', file + '5', '.')) 
 
                 
                 # check bottom left + bottom right of pawn for captures
@@ -1422,7 +1429,6 @@ class ChessGame:
         # end black_candidate_moves
    
 
-    # todo -- update with pawn promotion and make sure that works
     def send_white_move(self, start_sq, end_sq, pawn_promotion=None):
         # check legality of move
         # pawn_promotion is a string like 'Q' or 'N' -- piece to promote to
@@ -1431,7 +1437,7 @@ class ChessGame:
             # ehrm move is bad
             return -1
         
-        if pawn_prmotion is not None and (start_sq, end_sq, pawn_promotion) not in self.generate_white_candidate_moves():
+        if pawn_promotion is not None and (start_sq, end_sq, pawn_promotion) not in self.generate_white_candidate_moves():
             # move is still bad
             return -1
         
@@ -1458,22 +1464,58 @@ class ChessGame:
             self.last_pawn_move = 'z0' # null value
 
         
-        # update castling -- TODO
-        if self.game_board.get_piece_type_atsq(end_sq) == 'K':
-            # no castling
-            self.white_kingside_castling = False
-            self.white_queenside_castling = False 
-        
-        # ehrm add section about if a rook moves + the castling priviledges there + if captured + all that stuff
-        # nvm don't do this
+        if pawn_promotion in ['N', 'B', 'R', 'Q']:
+            # change piece type at final sq
+            self.game_board.set_piece_tosq(end_sq, pawn_promotion, 'w')
 
 
-        
-        return
+        return 0 # good exit code
     
-    # todo
+
+
+
+
+
+
     def send_black_move(self, start_sq, end_sq):
-        return
+
+        
+        if pawn_promotion is None and (start_sq, end_sq) not in self.generate_black_candidate_moves():
+            return -1
+        
+        if pawn_promotion is not None and (start_sq, end_sq, pawn_promotion) not in self.generate_black_candidate_moves():
+            return -1
+        
+        # ok move seems legit
+        self.game_board.send_move(start_sq, end_sq)
+        if end_sq in self.white_piece_locations:
+            self.white_piece_locations.remove(end_sq) # piece is captured
+        
+        self.black_piece_locations.remove(start_sq)
+        self.black_piece_locations.append(end_sq)
+        
+        self.black_turn = False
+        
+        # ok eval board
+        if self.is_white_king_in_check():
+            self.white_king_check = True
+
+
+        # update last_pawn_move (if pawn moved from e.g. c7 to c5)
+        if self.game_board.get_piece_type_atsq(end_sq) == 'P' and start_sq[1] == '7' and start_sq[0] == end_sq[0]:
+            # chat im pretty sure the pawn just moved two squares
+            self.last_pawn_move = start_sq[0] + chr(ord(start_sq[1]) - 1) # yippee
+            # last move was e.g. c7 --> c5. We need to change the c7 --> c6 (hence the -1)
+        else:
+            self.last_pawn_move = 'z0' # null value
+
+        
+        if pawn_promotion in ['N', 'B', 'R', 'Q']:
+            # change piece type at final sq
+            self.game_board.set_piece_tosq(end_sq, pawn_promotion, 'b')
+
+
+        return 0 # good exit code
 
 
 
@@ -1594,11 +1636,14 @@ class ChessGame:
 
 
     
-    # end class
+    # end class!
 
 
 game = ChessGame()
-game.load_pos_from_fen('rn2kb1r/p2p1ppp/q3p3/1Rpn4/2K1P3/1PP5/1P1P1PPP/1NBQ1BNR w kq - 5 12')
+game.load_pos_from_fen('rnbq1b1r/ppp1pk1p/8/3p2p1/3PP1n1/5P2/PPP2K1P/RNBQ1B1R w - - 0 8')
 game.printboard()
 print(game.generate_white_candidate_moves())
 print(game.is_white_king_in_check())
+print()
+print(game.generate_black_candidate_moves())
+print(game.is_black_king_in_check())
