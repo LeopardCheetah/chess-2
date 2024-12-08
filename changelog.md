@@ -19,6 +19,10 @@ Changelog -- where I'll keep progress updates.
 
 12/02 00:16 -- finished send_white_move (now just needa do send_black_move); seems like all there is to do is to code everything for black and then win!!
 
+----
+
+12/08 12:23 -- updated is_black_king_in_check and black_candidate_moves
+
 
 todolist (so i dont forget when i wake up):    
 - finish everything for black
