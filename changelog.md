@@ -27,7 +27,11 @@ Changelog -- where I'll keep progress updates.
 12/08 14:30 -- RANDOM MOVER BOT IS DONE!! YOU CAN NOW PLAY CHESS AGAINST IT       
 12/08 14:40 -- Fixed en passant bug RRRRRRAAAAHHHHHHHHHH      
      
-12/09 15:45 -- (in class) -- start castling implementation; did white_candidate_moves. need to do white_send_move, black_candidate_moves, black_send_moves, and update random mover bot.         
+12/09 15:45 -- (in class) -- start castling implementation; did white_candidate_moves. need to do white_send_move, black_candidate_moves, black_send_moves, and update random mover bot.       
+     
+12/10 12:52 -- (in stats) -- finish black_candidate_moves with castling     
+12/10 13:36 -- finished white_send_move and black_send_move
+12/10 14:00 -- finish castling implementation!   
 
 
 
@@ -40,7 +44,6 @@ things to consider doing:
 - deploy to lichess?
 
 other also kinda important:
-- incorporate castling
 - figure out the half move clock ( + 50 move rule, 3-fold repetition)
     
 
