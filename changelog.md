@@ -19,13 +19,16 @@ Changelog -- where I'll keep progress updates.
 
 12/02 00:16 -- finished send_white_move (now just needa do send_black_move); seems like all there is to do is to code everything for black and then win!!
 
-----
+----    
 
-12/08 12:23 -- updated is_black_king_in_check and black_candidate_moves
-12/08 12:52 -- debugged black_king_in_check (it was a variable error bruh) and did send_black_move. i think random bot is ready to be coded :D 
+12/08 12:23 -- updated is_black_king_in_check and black_candidate_moves     
+12/08 12:52 -- debugged black_king_in_check (it was a variable error bruh) and did send_black_move. i think random bot is ready to be coded :D     
+       
+12/08 14:30 -- RANDOM MOVER BOT IS DONE!! YOU CAN NOW PLAY CHESS AGAINST IT       
+12/08 14:40 -- Fixed en passant bug RRRRRRAAAAHHHHHHHHHH      
+     
+12/09 15:45 -- (in class) -- start castling implementation; did white_candidate_moves. need to do white_send_move, black_candidate_moves, black_send_moves, and update random mover bot.         
 
-12/08 14:30 -- RANDOM MOVER BOT IS DONE!! YOU CAN NOW PLAY CHESS AGAINST IT
-12/08 14:40 -- Fixed en passant bug RRRRRRAAAAHHHHHHHHHH
 
 
 
