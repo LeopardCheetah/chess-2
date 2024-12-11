@@ -55,27 +55,39 @@ while not game_finished:
         game_finished = True
 
         clear()
-        game.printboard()
-        print()
 
         if game.is_white_king_in_check() and player_color == 0:
             # ok white is checkmated
             # player loses
+
+            game.printboard()
+            print()
             print("seems like you lost (you were checkmated) :(")
             continue
+
+
         if game.is_white_king_in_check() and player_color == 1:
             # ok you checkmated white as black.
+
+            game.printboard_blackpov()
+            print()
             print("woo congrats on winning!")
             print("you checkmated the white king.")
             continue
 
+
         if not game.is_white_king_in_check() and player_color == 0:
             # white is stalemated
+            game.printboard()
+            print()
             print("seems like you got stalemated :/")
             print("it's a draw")
             continue
+
         if not game.is_white_king_in_check() and player_color == 1:
             # player as black has stalemated white
+            game.printboard_blackpov()
+            print()
             print("dang you stalemated the white king")
             print("it's a draw now :///")
 
@@ -84,37 +96,49 @@ while not game_finished:
         game_finished = True
 
         clear()
-        game.printboard()
-        print()
+        
 
         if game.is_black_king_in_check() and player_color == 0:
             # black is checkmated, player is white
             # player loses
+            game.printboard()
+            print()
             print("congrats on checkmating the black king!")
             print("you win!")
             continue
 
         if game.is_black_king_in_check() and player_color == 1:
             # ok you (the player) got checkmated
+            game.printboard_blackpov()
+            print()
             print('seems like you got checkmated :(')
             continue
 
 
         if not game.is_black_king_in_check() and player_color == 1:
             # black is stalemated, player is black
+            game.printboard_blackpov()
+            print()
             print("seems like you got stalemated :/")
             print("it's a draw for both sides")
             continue
 
         if not game.is_black_king_in_check() and player_color == 0:
             # player as white has stalemated black
+            game.printboard()
+            print()
             print("dang you stalemated the black king")
             print("it's a draw now :///")
 
 
 
     clear()
-    game.printboard() # print board
+    if player_color == 0:
+        # player is white
+        game.printboard() # print board
+    
+    if player_color == 1:
+        game.printboard_blackpov()
 
 
 

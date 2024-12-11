@@ -51,6 +51,27 @@ class Board:
         return
 
 
+
+    def printboard_blackpov(self):
+        # print from black's pov
+        print()
+        print('  +-----------------+')
+        c = 1
+        for row_ind in range(8):
+            print(c, '|', end=' ')
+            c += 1
+            for col_ind in range(8):
+                print(self.board[7 - row_ind][7 - col_ind], end=' ')
+            
+            print('|')
+        
+        print('  +-----------------+')
+        print('    h g f e d c b a')
+        return
+
+
+
+
     def reset_board(self):
         # reset board to starting position of normal chess
 

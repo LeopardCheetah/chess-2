@@ -458,7 +458,9 @@ class ChessGame:
         self.game_board.printboard()
         return
 
-
+    def printboard_blackpov(self):
+        self.game_board.printboard_blackpov()
+        return 
 
     # now there is castling
     def generate_white_candidate_moves(self):
