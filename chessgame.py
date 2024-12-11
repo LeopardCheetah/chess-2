@@ -462,6 +462,9 @@ class ChessGame:
         self.game_board.printboard_blackpov()
         return 
 
+
+
+
     # now there is castling
     def generate_white_candidate_moves(self):
 
@@ -956,8 +959,8 @@ class ChessGame:
 
 
         # manually add castling
-        # kingside castling -- ('e1', 'g1', 'C') -- to indicate kingside castling
-        # queenside castling -- ('e1', 'c1', 'C') -- to indicate queenside castling
+        # kingside castling -- ('e1', 'g1') -- to indicate kingside castling
+        # queenside castling -- ('e1', 'c1') -- to indicate queenside castling
         if self.white_kingside_castling:
             # check that 
             # a. the king does not move through check
@@ -993,7 +996,7 @@ class ChessGame:
 
                             if not self.is_white_king_in_check(piece_list):
                                 # raaaaaaahhhhh ok add to list
-                                actual_candidate_moves.append(('e1', 'g1', 'C')) # c to mark castling
+                                actual_candidate_moves.append(('e1', 'g1')) # no c -- uci doesn't support it
                             
 
                             # unwrap
@@ -1020,7 +1023,7 @@ class ChessGame:
                             piece_list.pop(piece_list.index('d1'))
                             piece_list.append('c1')
                             if not self.is_white_king_in_check(piece_list):
-                                actual_candidate_moves.append(('e1', 'c1', 'C')) # C to mark castling
+                                actual_candidate_moves.append(('e1', 'c1')) 
                             self.game_board.move_piece('c1', 'd1') # unwrap
                         self.game_board.move_piece('d1', 'e1') # move back
             # end queenside castling if-statement
@@ -1029,9 +1032,6 @@ class ChessGame:
         return actual_candidate_moves       
         # end white_candidate_moves
         
-
-
-
     # there is also castling here
     def generate_black_candidate_moves(self):
         candidate_moves = [] 
@@ -1532,7 +1532,7 @@ class ChessGame:
 
                             if not self.is_black_king_in_check(piece_list):
                                 # raaaaaaahhhhh ok add to list
-                                actual_candidate_moves.append(('e8', 'g8', 'C')) # c to mark castling
+                                actual_candidate_moves.append(('e8', 'g8'))
                             
 
                             # unwrap
@@ -1559,7 +1559,7 @@ class ChessGame:
                             piece_list.pop(piece_list.index('d8'))
                             piece_list.append('c8')
                             if not self.is_black_king_in_check(piece_list):
-                                actual_candidate_moves.append(('e8', 'c8', 'C')) # C to mark castling
+                                actual_candidate_moves.append(('e8', 'c8'))
                             self.game_board.move_piece('c8', 'd8') # unwrap
                         self.game_board.move_piece('d8', 'e8') # move back
             # end queenside castling if-statement
@@ -1571,6 +1571,32 @@ class ChessGame:
 
 
 
+
+    # never tested
+    def send_uci_move(self, uci):
+        # yeah just do it
+        
+        # e.g. c2c4, g1f3, a7a8q 
+        # castling is just e1g1 (king position change)
+
+        # find if the start sq is a white or black piece
+        if self.game_board.get_piece_color_atsq(uci[0] + uci[1]) == 'w':
+            # send white uci move
+
+            if len(uci) == 5:
+                return self.send_white_move(uci[0] + uci[1], uci[2] + uci[3], uci[4])
+            
+            return self.send_white_move(uci[0] + uci[1], uci[2] + uci[3])
+
+        if self.game_board.get_piece_color_atsq(uci[0] + uci[1]) == 'b':
+            if len(uci) == 5:
+                return self.send_black_move(uci[0] + uci[1], uci[2] + uci[3], uci[4])
+            
+            return self.send_black_move(uci[0] + uci[1], uci[2] + uci[3])
+
+        return -1 # ehrm something broke
+        
+        
 
 
 
@@ -1629,33 +1655,39 @@ class ChessGame:
 
 
 
-        # check castling
-        if pawn_promotion == 'C':
-            if start_sq == 'e1' and end_sq == 'g1':
-                # ok sure this seems legit
-                # king has been moved to g1
-                # move rook
-                self.game_board.move_piece('h1', 'f1') # move rook
-                self.white_kingside_castling = False
-                self.white_queenside_castling = False
-                self.white_piece_locations.remove('h1') # move rook
-                self.white_piece_locations.append('f1')
-            
-            if start_sq == 'e1' and end_sq == 'c1':
-                self.white_queenside_castling = False
-                self.white_kingside_castling = False # white can't castle both queenside and kingside
-                self.game_board.move_piece('a1', 'd1')
-                self.white_piece_locations.remove('a1') 
-                self.white_piece_locations.append('d1')
+        # check if it's king/queenside castling
+        if start_sq == 'e1' and end_sq == 'g1' and self.game_board.get_piece_type_atsq('g1') == 'K' and self.game_board.get_piece_type_atsq('h1') == 'R':
+            # extra failsafe with the rook check
+
+            # ok sure this seems legit
+            # king has been moved to g1
+            # move rook
+            self.game_board.move_piece('h1', 'f1') # move rook
+            self.white_kingside_castling = False
+            self.white_queenside_castling = False
+            self.white_piece_locations.remove('h1') # move rook
+            self.white_piece_locations.append('f1')
+        
+        if start_sq == 'e1' and end_sq == 'c1' and self.game_board.get_piece_type_atsq('c1') == 'K' and self.game_board.get_piece_type_atsq('a1') == 'R':
+            self.white_queenside_castling = False
+            self.white_kingside_castling = False # white can't castle both queenside and kingside
+            self.game_board.move_piece('a1', 'd1')
+            self.white_piece_locations.remove('a1') 
+            self.white_piece_locations.append('d1')
 
         # what if the rook moved???
         if self.game_board.get_piece_type_atsq(end_sq) == 'R' and start_sq == 'h1':
             # revoke castling rights
             self.white_kingside_castling = False
         
-        if self.game_board.get_piece_color_atsq(end_sq) == 'R' and start_sq == 'a1':
+        if self.game_board.get_piece_type_atsq(end_sq) == 'R' and start_sq == 'a1':
             self.white_queenside_castling = False
 
+        # check if king has moved or not
+        if self.game_board.get_piece_type_atsq(end_sq) == 'K':
+            # yeah ur cooked no castling
+            self.white_kingside_castling = False
+            self.white_queenside_castling = False
 
         return 0 # good exit code
     
@@ -1699,30 +1731,37 @@ class ChessGame:
             self.game_board.set_piece_tosq(end_sq, pawn_promotion, 'b')
 
 
-        if pawn_promotion == 'C':
-            if start_sq == 'e8' and end_sq == 'g8':
-                self.black_kingside_castling = False
-                self.game_board.move_piece('h8', 'f8')
 
-                self.black_queenside_castling = False # since black king also cant castle queenside if it's castled kingside
-                self.white_piece_locations.remove('h8') 
-                self.white_piece_locations.append('f8')
-            
-            if start_sq == 'e8' and end_sq == 'c8':
-                self.black_queenside_castling = False
-                self.game_board.move_piece('a8', 'd8')
-                self.black_kingside_castling = False
-                self.white_piece_locations.remove('a8') 
-                self.white_piece_locations.append('d8')
 
+        # check if it's king/queenside castling (but black)
+        if start_sq == 'e8' and end_sq == 'g8' and self.game_board.get_piece_type_atsq('g8') == 'K' and self.game_board.get_piece_type_atsq('h8') == 'R':
+            self.game_board.move_piece('h8', 'f8') # move rook
+            self.black_kingside_castling = False
+            self.black_queenside_castling = False
+            self.black_piece_locations.remove('h8') # move rook
+            self.black_piece_locations.append('f8')
+        
+        if start_sq == 'e8' and end_sq == 'c8' and self.game_board.get_piece_type_atsq('c8') == 'K' and self.game_board.get_piece_type_atsq('a8') == 'R':
+            self.black_queenside_castling = False
+            self.black_kingside_castling = False # white can't castle both queenside and kingside
+            self.game_board.move_piece('a8', 'd8')
+            self.black_piece_locations.remove('a8') 
+            self.black_piece_locations.append('d8')
 
         # what if the rook moved???
         if self.game_board.get_piece_type_atsq(end_sq) == 'R' and start_sq == 'h8':
             # revoke castling rights
             self.black_kingside_castling = False
         
-        if self.game_board.get_piece_color_atsq(end_sq) == 'R' and start_sq == 'a8':
+        if self.game_board.get_piece_type_atsq(end_sq) == 'R' and start_sq == 'a8':
             self.black_queenside_castling = False
+
+        # check if king has moved or not
+        if self.game_board.get_piece_type_atsq(end_sq) == 'K':
+            self.black_kingside_castling = False
+            self.black_queenside_castling = False 
+
+
 
         return 0 # good exit code
 

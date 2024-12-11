@@ -38,6 +38,8 @@ Changelog -- where I'll keep progress updates.
 12/11 09:54 -- implemented thing so that the board rotates when player is playing as black
 12/11 09:58 -- made board color changes easier
 
+12/11 10:23 (finished at 10:37) -- attempting to implement UCI protocol (castling protocol has also changed in my code)
+
 
 
 
