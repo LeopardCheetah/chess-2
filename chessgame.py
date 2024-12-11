@@ -142,10 +142,10 @@ class ChessGame:
 
 
         # check bottom right
-        queen_bottom_right_count = min(num_rank - 1, 8 - num_file)
+        king_bottom_right_count = min(num_rank - 1, 8 - num_file)
 
-        for ind in range(1, queen_bottom_right_count + 1):
-            queen_str = chr(ord(white_king_file) + ind) + str(num_rank - ind)
+        for ind in range(1, king_bottom_right_count + 1):
+            king_str = chr(ord(white_king_file) + ind) + str(num_rank - ind)
             piece_color_at_sq = self.game_board.get_piece_color_atsq(king_str)
 
             if piece_color_at_sq == 'w':
@@ -1030,7 +1030,7 @@ class ChessGame:
 
 
 
-    # there is also castling here (or will be)
+    # there is also castling here
     def generate_black_candidate_moves(self):
         candidate_moves = [] 
 

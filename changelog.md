@@ -31,20 +31,23 @@ Changelog -- where I'll keep progress updates.
      
 12/10 12:52 -- (in stats) -- finish black_candidate_moves with castling     
 12/10 13:36 -- finished white_send_move and black_send_move
-12/10 14:00 -- finish castling implementation!   
+12/10 14:00 -- finish castling implementation!    
+   
+12/11 09:27 -- minor changes, implemented stalemate    
+12/11 09:45 -- implemented so that player can play as black     
 
 
 
 
-todolist (so i dont forget when i wake up):    
-- (nothing)
 
 
-things to consider doing:
-- deploy to lichess?
+things to consider doing:   
+- deploy to lichess?   
 
-other also kinda important:
-- figure out the half move clock ( + 50 move rule, 3-fold repetition)
-    
+also kinda important things:   
+- figure out the half move clock (50 move rule)    
+- do the inefficient material thing (e.g. KN vs K)      
+- implement 3-fold repetition    
+- figure out draw offers + code in resignation
 
     
