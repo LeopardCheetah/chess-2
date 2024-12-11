@@ -159,7 +159,7 @@ while not game_finished:
         if move == '0-0' or move == '0-0-0':
             if move == '0-0':
                 # kingside castling
-                status = game.send_white_move('e1', 'g1', 'C')
+                status = game.send_white_move('e1', 'g1')
                 if status == 0:
                     continue
                 
@@ -169,7 +169,7 @@ while not game_finished:
                 continue
             
             # move = 0-0-0
-            status = game.send_white_move('e1', 'c1', 'C')
+            status = game.send_white_move('e1', 'c1')
             if status == 0:
                 continue
             
@@ -241,7 +241,7 @@ while not game_finished:
         if move == '0-0' or move == '0-0-0':
             if move == '0-0':
                 # kingside castling
-                status = game.send_black_move('e8', 'g8', 'C')
+                status = game.send_black_move('e8', 'g8')
                 if status == 0:
                     continue
                 
@@ -251,7 +251,7 @@ while not game_finished:
                 continue
             
             # move = 0-0-0
-            status = game.send_black_move('e8', 'c8', 'C')
+            status = game.send_black_move('e8', 'c8')
             if status == 0:
                 continue
             
