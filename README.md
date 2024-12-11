@@ -11,4 +11,7 @@ Update: I failed my target goal :c.
 I'll hopefully finish it up today (12/8)   
 
 
-update 2: I HAVE FINISHED (kinda)
+update 2: I HAVE FINISHED (kinda)  
+    
+
+update 3: I am now (attempting to) deploy my code to [lichess](https://lichess.org) via my [LeopardBot](https://github.com/LeopardCheetah/LeopardBot) repo.
