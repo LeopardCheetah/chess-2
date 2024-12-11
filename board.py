@@ -7,6 +7,8 @@ class color:
     GREEN = '\033[92m'
     FAIL = '\033[91m'
     ENDCOLOR = '\033[0m'
+
+    # these not used
     BOLD = '\033[1m'
     GRAY = '\033[2m'
     UNDERLINE = '\033[4m'
@@ -14,6 +16,9 @@ class color:
 
 class Board:
     board = [["." for a in range(8)] for b in range(8)] # generic
+
+    white_piece_color = color.BLUE # white's pieces are blue
+    black_piece_color = color.FAIL # black's pieces are red
 
 
     def __init__(self):
@@ -30,8 +35,6 @@ class Board:
         return (8 - sq_rank), int(ord(sq_file) - ord('a'))
 
     
-
-
 
     def printboard(self):
         # print the chess board
@@ -79,15 +82,15 @@ class Board:
         starting_ls = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
         pointer = 'a'
         for piece in starting_ls:
-            self.change_square(pointer+'1', f'{color.BLUE}' + piece + f'{color.ENDCOLOR}')
-            self.change_square(pointer+'8', f'{color.GREEN}' + piece + f'{color.ENDCOLOR}')
+            self.change_square(pointer+'1', f'{self.white_piece_color}' + piece + f'{color.ENDCOLOR}')
+            self.change_square(pointer+'8', f'{self.black_piece_color}' + piece + f'{color.ENDCOLOR}')
             pointer = chr(ord(pointer) + 1) # increment pointer
         
         pointer = 'a'
         # add pawns
         for _ in range(8):
-            self.change_square(pointer+'2', f'{color.BLUE}P{color.ENDCOLOR}')
-            self.change_square(pointer+'7', f'{color.GREEN}P{color.ENDCOLOR}')
+            self.change_square(pointer+'2', f'{self.white_piece_color}P{color.ENDCOLOR}')
+            self.change_square(pointer+'7', f'{self.black_piece_color}P{color.ENDCOLOR}')
             pointer = chr(ord(pointer) + 1) # increment pointer
         
         return #!!
@@ -128,7 +131,7 @@ class Board:
 
         # we assume all inputs are "good"
 
-        color_code = color.BLUE if piece_color == 'w' else color.GREEN # blue -- white, green -- black
+        color_code = self.white_piece_color if piece_color == 'w' else self.black_piece_color # blue -- white, green -- black
 
         self.change_square(square, f'{color_code}' + piece_type + f'{color.ENDCOLOR}')
         return 
@@ -155,7 +158,8 @@ class Board:
             return -1
     
 
-        return 'w' if self.board[row][col][3] == '4' else 'b' # some interesting string stuff going on here
+        return 'w' if self.board[row][col][3] == self.white_piece_color[3] else 'b' # some interesting string stuff going on here 
+        # ehrm this needs to be fixed.
     
 
     def get_piece_type_atsq(self, square):

@@ -35,6 +35,8 @@ Changelog -- where I'll keep progress updates.
    
 12/11 09:27 -- minor changes, implemented stalemate    
 12/11 09:45 -- implemented so that player can play as black     
+12/11 09:54 -- implemented thing so that the board rotates when player is playing as black
+12/11 09:58 -- made board color changes easier
 
 
 
